@@ -1,0 +1,37 @@
+<h1>LOG IN</h1>
+<h2>Step 1</h2>
+
+<% if (studentAccVerified) {%>
+  <h3>Account verified 😄 </h3>
+
+  <% } else { %>
+    <h3> 😠 </h3>
+    <form action="/login" method="post">
+      <p>
+        <label>Username:</label>
+        <input type="text" name="username" required>
+      </p>
+      <p>
+        <label>Password:</label>
+        <input type="password" name="password" required>
+      </p>
+      <p>
+        <input type="submit" value="Set up student account">
+      </p>
+    </form>
+    <% } %>
+    
+<h2>Step 2</h2>
+
+<% if (googleAccVerified) {%>
+  <h3>Google verified 😄 </h3>
+  <% } else { %>
+    <h3> 😠 </h3>
+    <div>
+      <a href="/login/auth/google">Authenticate your Google account</a>
+    </div>
+<% } %>
+
+<% if (googleAccVerified && studentAccVerified) {%>
+  <a href="/google/get">CLICK HERE TO IMPORT SCHEDULE TO GG CALENDAR</a>  
+<% } %>
