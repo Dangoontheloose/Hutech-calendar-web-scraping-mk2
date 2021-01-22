@@ -14,6 +14,7 @@ const appCredentials = {
     client_secret: 'ShuULz5T3c2ycKmGPqiul-KZ',
     // redirect: 'https://hutechhelper.herokuapp.com/api/redirect',
     redirect: 'http://localhost:5000/api/redirect',
+    // redirect: 'https://hutechhelper.glitch.me/api/redirect',
 }
 
 const { client_id, client_secret, redirect } = appCredentials;

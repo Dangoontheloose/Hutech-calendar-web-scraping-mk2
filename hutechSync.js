@@ -113,8 +113,8 @@ exports.getSchedule = async (username, password) => {
         });
         return data;
     });
-    
-    const newStudent = Student.create(
+    let newID = '';
+    const newStudent = await Student.create(
         {
             username: username,
             password: password,
@@ -132,13 +132,15 @@ exports.getSchedule = async (username, password) => {
             //     so_tuan_hoc_1: results['so_tuan_hoc_1'],
             //     so_tuan_hoc_2: results['so_tuan_hoc_2'],
             // }
-        },
-        (err, doc) => { 
-            console.log(doc);
-            return doc; 
-        })
+        }
+        // (err, doc) => { 
+        //     console.log(doc);
+        //     newID = newStudent._id;
+        // }
+    )
 
-    fs.writeFileSync('./userSchedule.json', JSON.stringify(results), (err) => { console.log(err); })
+    // fs.writeFileSync('./userSchedule.json', JSON.stringify(results), (err) => { console.log(err); })
+    newID = newStudent._id;
     await browser.close();
-    return newStudent._id;
+    return newID;
 };
