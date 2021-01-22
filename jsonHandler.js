@@ -90,11 +90,12 @@ exports.generateEventList = async (studentID) => {
     
     var sch = [];
     
-    await Student.findById('600a7f902fd1810d03a44651', (err, doc) => {
+    await Student.findById(studentID, (err, doc) => {
         if(err) {
             console.log(err);
             return null;
         }
+        if(doc == null) {return null}
         let sc = [];
         sc = doc.schedule;
         sch = sc;
@@ -131,7 +132,7 @@ exports.generateEventList = async (studentID) => {
         const { rpTimes, rpDay1, rpDay2 } = getRecurrence(thu1, thu2, w1, w2);
 
         var event = {
-            'summary': subject['Subject'],
+            'summary': subject['subject'],
             'start': {
                 'dateTime': startTime,
                 'timeZone': 'Asia/Bangkok',

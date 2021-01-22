@@ -4,7 +4,8 @@ const { MemoryStore } = require('express-session');
 const fs = require('fs');
 //ket noi database
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/hutech', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/hutech', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://Dango:concu269@testcluster.pfa84.mongodb.net/hutech?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error'));
@@ -84,7 +85,7 @@ app.post('/login', (req, res) => {
 })
 
 app.get('/google/get', (req, res) => {
-    GG.createEvents();
+    GG.createEvents(req.session.studentID);
     res.redirect('/login');
 })
 const port = process.env.PORT || 5000;
