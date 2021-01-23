@@ -113,6 +113,7 @@ exports.getSchedule = async (username, password) => {
         });
         return data;
     });
+    
     let newID = '';
     const newStudent = await Student.create(
         {

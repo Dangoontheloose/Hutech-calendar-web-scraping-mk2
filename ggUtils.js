@@ -33,17 +33,18 @@ exports.getAuthURL = () => {
 exports.acquireToken = async (link) => {
 
 
-    const url = new URL(link, 'http://localhost:3000');
+    const url = new URL(link, 'http://localhost:5000');
+    // const url = new URL(link, 'https://hutechhelper.glitch.me');
     // const url = new URL(link, 'http://hutechhelper.herokuapp.com');
     const code = new URLSearchParams(url.search).get('code');
     const { tokens } = await oAuth2Client.getToken(code);
     // console.log(`\n\nTokens: ${tokens}\n\n`);
     oAuth2Client.setCredentials(tokens);
 
-    fs.writeFile(TOKEN_PATH, JSON.stringify(tokens), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-    })
+    // fs.writeFile(TOKEN_PATH, JSON.stringify(tokens), (err) => {
+    //     if (err) return console.error(err);
+    //     console.log('Token stored to', TOKEN_PATH);
+    // })
 }
 
 
