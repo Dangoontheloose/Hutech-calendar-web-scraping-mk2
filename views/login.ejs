@@ -1,48 +1,52 @@
-<h1 style="font-size: 50px; text-align: center;">HUTECH HELPER</h1>
-<h2 style="text-align: center;">QUẢN LÝ THỜI KHÓA BIỂU TRƯỜNG BẰNG GOOGLE CALENDAR</h2>
+<body style="text-align: center; background-color: lightsalmon;">
 
-<h1>GIỚI THIỆU</h1>
+  <h1 style="font-size: 50px; text-align: center;">HUTECH HELPER</h1>
+  <h2 style="text-align: center;">QUẢN LÝ THỜI KHÓA BIỂU TRƯỜNG BẰNG GOOGLE CALENDAR</h2>
 
-<p style="font-size: 17px;">Tự động truy xuất thời khóa biểu của trường và đưa vào Google Calendar để dễ dàng quản lý
-  lịch học</p>
+  <h1>GIỚI THIỆU</h1>
+
+  <p style="font-size: 17px;">Tự động truy xuất thời khóa biểu của trường và đưa vào Google Calendar để dễ dàng quản lý
+    lịch học</p>
 
 
-<h1>ĐĂNG NHẬP</h1>
-<h2 style="color: red;">Step 1</h2>
-<p style="font-size: 17px;">Đăng nhập bằng tài khoản sinh viên HUTECH</p>
+  <h1>ĐĂNG NHẬP</h1>
+  <h2 style="color: red;">Step 1</h2>
+  <p style="font-size: 17px;">Đăng nhập bằng tài khoản sinh viên HUTECH</p>
 
-<% if (studentAccVerified) {%>
-  <h3>Account verified 👍 </h3>
+  <% if (studentAccVerified) {%>
+    <h3 style="text-align: center;">Account verified 👍 </h3>
 
-  <% } else { %>
-    <h3> 😠 </h3>
-    <form action="/login" method="post">
-      <p>
-        <label>Username:</label>
-        <input type="text" name="username" required>
-      </p>
-      <p>
-        <label>Password:</label>
-        <input type="password" name="password" required>
-      </p>
-      <p>
-        <input type="submit" value="Set up student account">
-      </p>
-    </form>
-    <% } %>
+    <% } else { %>
+      <h3> 😠 </h3>
+      <form action="/login" method="post">
+        <p>
+          <label>Username:</label>
+          <input type="text" name="username" required>
+        </p>
+        <p>
+          <label>Password:</label>
+          <input type="password" name="password" required>
+        </p>
+        <p>
+          <input style="font-size: 20px;" type="submit" value="Set up student account">
+        </p>
+      </form>
+      <% } %>
 
-      <h2 style="color: red;">Step 2</h2>
-      <p style="font-size: 17px;">Đăng nhập vào tài khoản Google cần import thời khóa biểu</p>
+        <h2 style="color: red;">Step 2</h2>
+        <p style="font-size: 17px;">Đăng nhập vào tài khoản Google cần import thời khóa biểu</p>
 
-      <% if (googleAccVerified) {%>
-        <h3>Google verified 👍 </h3>
-        <% } else { %>
-          <h3> 😠 </h3>
-          <div>
-            <a href="/login/auth/google">Authenticate your Google account</a>
-          </div>
-          <% } %>
+        <% if (googleAccVerified) {%>
+          <h3>Google verified 👍 </h3>
+          <% } else { %>
+            <h3> 😠 </h3>
+            <div>
+              <a href="/login/auth/google" style="text-decoration: none; border: 3px solid lightpink; background: lightpink; color: black; font-size: 20px; ">Authenticate your Google account</a>
+            </div>
+            <% } %>
 
-            <% if (googleAccVerified && studentAccVerified) {%>
-              <a href="/google/get">CLICK HERE TO IMPORT SCHEDULE TO GG CALENDAR</a>
-              <% } %>
+              <% if (googleAccVerified && studentAccVerified) {%>
+                <a style="text-decoration: none; border: 3px solid lightpink; background: lightpink; color: black; font-size: 20px; "
+                  href="/google/get">CLICK HERE TO IMPORT SCHEDULE TO GG CALENDAR</a>
+                <% } %>
+</body>
