@@ -4,7 +4,6 @@ const { Schema } = mongoose;
 
 const studentSchema = new Schema({
   username: String,
-  password: String,
   schedule: [{
     subject: String,
     thu_1: String,
@@ -17,7 +16,8 @@ const studentSchema = new Schema({
     so_tuan_hoc_1: String,
     so_tuan_hoc_2: String,
   }],
+  calID: String,
 });
 
-Student = mongoose.model('students', studentSchema);
+const Student = mongoose.model('students', studentSchema);
 module.exports = Student;

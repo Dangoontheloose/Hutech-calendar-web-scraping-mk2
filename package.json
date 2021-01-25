@@ -17,9 +17,6 @@
     "express-session": "^1.17.1",
     "googleapis": "^67.0.0",
     "mongoose": "^5.11.13",
-    "passport": "^0.4.1",
-    "passport-google-oauth20": "^2.0.0",
-    "puppeteer": "^5.5.0",
-    "superagent": "^6.1.0"
+    "puppeteer": "^5.5.0"
   }
 }

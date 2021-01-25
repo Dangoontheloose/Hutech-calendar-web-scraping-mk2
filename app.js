@@ -34,34 +34,59 @@ app.use(session({
         maxAge: 60 * 1000 * 3
     }
 }));
+
+
 app.get('/', (req, res) => {
     res.redirect('/login');
 })
 
+app.get('/home', (req, res) => {
+    if (!req.session.studentLoggedIn) {
+        res.redirect('/login');
+    }
+    else{
+        res.render('home');
+    }
+})
 app.get('/login/auth/google', (req, res) => {
     res.redirect(GG.getAuthURL());
 })
 
 app.get('/api/redirect', (req, res) => {
-    GG.acquireToken(req.url);
-    req.session.googleLoggedIn = true;
-    res.redirect('/login');
+    GG.acquireToken(req.url)
+    .then((token) => {
+        if (token) {
+            req.session.googleLoggedIn = true;
+        }
+        res.redirect('/login');
+    })
+    .catch(err => {
+        console.log(err);
+        res.redirect('/login')
+    })
 
 })
 
 app.get('/login', (req, res) => {
     let studentAccVerified = false;
     let googleAccVerified = false;
-    if (req.session.studentLoggedIn) {
-        studentAccVerified = true;
+
+    if (req.session.studentLoggedIn && req.session.googleLoggedIn) {
+        res.redirect('/home');
     }
-    if (req.session.googleLoggedIn) {
-        googleAccVerified = true;
+    else {
+
+        if (req.session.studentLoggedIn) {
+            studentAccVerified = true;
+        }
+        if (req.session.googleLoggedIn) {
+            googleAccVerified = true;
+        }
+        res.render('login', {
+            studentAccVerified: studentAccVerified,
+            googleAccVerified: googleAccVerified
+        });
     }
-    res.render('login', {
-        studentAccVerified: studentAccVerified,
-        googleAccVerified: googleAccVerified
-    });
 });
 
 app.post('/login', (req, res) => {
@@ -78,12 +103,21 @@ app.post('/login', (req, res) => {
             }
             res.redirect('/login');
         })
+        .catch(err => {
+            res.redirect('/login');
+        })
 
 })
 
-app.get('/google/get', (req, res) => {
-    GG.createEvents(req.session.studentID);
-    res.redirect('/login');
+app.post('/google/get', (req, res) => {
+    GG.importEvents(req.session.studentID)
+    .then(() => res.redirect('/home'))
+    .catch(err => {
+        console.log(err);
+        req.session.googleLoggedIn = false;
+        console.log(req.session.googleLoggedIn + ' trang thai 🤦 ');
+        res.redirect('/login');
+    });
 })
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`listening on port ${port}`));

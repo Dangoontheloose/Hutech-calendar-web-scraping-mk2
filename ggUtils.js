@@ -3,10 +3,12 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const jsonHandler = require('./jsonHandler');
 
-const TOKEN_PATH = 'token.json';
+const db = require('./dbHandler');
 
 const defaultScope = [
-    'https://www.googleapis.com/auth/calendar.events'
+    'https://www.googleapis.com/auth/calendar.events',
+    '    https://www.googleapis.com/auth/calendar'
+
 ]
 
 const appCredentials = {
@@ -21,6 +23,32 @@ const { client_id, client_secret, redirect } = appCredentials;
 const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect);
 
 
+const createNewCalendar = async (summary) => {
+    const CAL = google.calendar({ version: 'v3', auth: oAuth2Client });
+
+    var newCalendar = {
+        'resource': {
+            'summary': summary,
+            'timeZone': 'Asia/Bangkok',
+        }
+    };
+    try {
+        const calendar = await CAL.calendars.insert(newCalendar);
+        return calendar;
+    } catch (err) {
+        console.log("[ERROR] Error occurred while creating calendar: " + err);
+        throw err;
+    }
+}
+const deleteCurrentCalendar = async (calendarId) => {
+    const CAL = google.calendar({ version: 'v3', auth: oAuth2Client });
+    try {
+        CAL.calendars.delete({ calendarId: calendarId });
+    } catch (error) {
+        console.log("[ERROR] Error occurred while deleting calendar: " + err);
+    }
+}
+
 exports.getAuthURL = () => {
 
     const authUrl = oAuth2Client.generateAuthUrl({
@@ -31,70 +59,70 @@ exports.getAuthURL = () => {
 }
 
 exports.acquireToken = async (link) => {
+    try {
+        const url = new URL(link, 'http://localhost:5000');
+        // const url = new URL(link, 'https://hutechhelper.glitch.me');
+        // const url = new URL(link, 'http://hutechhelper.herokuapp.com');
+        let myToken = {};
+        const code = new URLSearchParams(url.search).get('code');
+        oAuth2Client.getToken(code, (err, token) => {
+            oAuth2Client.setCredentials(token);
+            if (err) {
+                throw err;
+            }
+            myToken = token;
+        });
+        return myToken;
+    } catch (error) {
+        console.log('[ERROR] Error occurred while acquiring token: ' + error);
+        throw err;
+    }
 
-
-    const url = new URL(link, 'http://localhost:5000');
-    // const url = new URL(link, 'https://hutechhelper.glitch.me');
-    // const url = new URL(link, 'http://hutechhelper.herokuapp.com');
-    const code = new URLSearchParams(url.search).get('code');
-    const { tokens } = await oAuth2Client.getToken(code);
-    // console.log(`\n\nTokens: ${tokens}\n\n`);
-    oAuth2Client.setCredentials(tokens);
-
-    // fs.writeFile(TOKEN_PATH, JSON.stringify(tokens), (err) => {
-    //     if (err) return console.error(err);
-    //     console.log('Token stored to', TOKEN_PATH);
-    // })
 }
 
 
-exports.createEvents = (studentID) => {
-
-    //#region event example
-    // var event = {
-    //     'summary': 'Google I/O 2015',
-    //     'location': '800 Howard St., San Francisco, CA 94103',
-    //     'description': 'A chance to hear more about Google\'s developer products.',
-    //     'start': {
-    //         // 'dateTime': '2021-01-21T09:00:00+07:00',
-    //         'dateTime': '2021-03-01T06:45:00+07:00',
-    //         'timeZone': 'Asia/Bangkok',
-    //     },
-    //     'end': {
-    //         // 'dateTime': '2021-01-21T17:00:00+07:00',
-    //         'dateTime': '2021-03-01T09:00:00+07:00',
-    //         'timeZone': 'Asia/Bangkok',
-    //     },
-    //     'recurrence': [
-    //         'RRULE:FREQ=WEEKLY;COUNT=2;WKST=MO;BYDAY=MO,'
-    //     ],
-    //     // 'reminders': {
-    //     //   'useDefault': false,
-    //     //   'overrides': [
-    //     //     {'method': 'email', 'minutes': 24 * 60},
-    //     //     {'method': 'popup', 'minutes': 10},
-    //     //   ],
-    //     // },
-    // };
-    //#endregion
 
 
-    const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
-
-    jsonHandler.generateEventList(studentID)
-        .then(eventList => {
-            eventList.forEach(event => {
-
-                calendar.events.insert({
-                    calendarId: 'primary',
-                    resource: event,
-                }, function (err, event) {
-                    if (err) {
-                        console.log('There was an error contacting the Calendar service: ' + err);
-                        return;
-                    }
-                    console.log(`Event created for subject: ${event.summary}`);
-                })
+exports.importEvents = async (studentID) => {
+    try {
+        //delete current calendar
+        await db.getCalendarID(studentID)
+            .then(calendarId => {
+                console.log('\n\nid cal: ' + calendarId);
+                if (calendarId != undefined) {
+                    deleteCurrentCalendar(calendarId)
+                        .catch(err => { 
+                            console.log('Error while deleting' + err);
+                            throw err; });
+                }
             })
-        });
+        //recreate calendar
+        const newCalendar = await createNewCalendar('Lich hoc[Generated with HUTECH-Helper]')
+            .catch(err => { throw err; });
+        //save new calendar to db for next delete call
+        db.updateCalendarID(studentID, newCalendar.data.id)
+            .catch(err => { throw err; })
+        const calendar = google.calendar({ version: 'v3', auth: oAuth2Client });
+        //generate event list from db
+        jsonHandler.generateEventList(studentID)
+            .then(eventList => {
+                eventList.forEach(event => {
+                    calendar.events.insert({
+                        calendarId: newCalendar.data.id,
+                        resource: event,
+                    }, function (err, event_1) {
+                        if (err) {
+                            console.log('There was an error contacting the Calendar service: ' + err);
+                            return;
+                        }
+                        console.log(`Event created for subject: ${event_1.data.summary}`);
+                    });
+                });
+            });
+    } catch (err_1) {
+        console.log(err_1);
+        console.log('Need to authenticate GG again!');
+        throw err_1;
+    }
+
 }
