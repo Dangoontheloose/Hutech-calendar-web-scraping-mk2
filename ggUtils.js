@@ -15,8 +15,8 @@ const appCredentials = {
     client_id: '446698965884-3rh9g7p66cv34ktid73s91ebqa17bhm2.apps.googleusercontent.com',
     client_secret: 'ShuULz5T3c2ycKmGPqiul-KZ',
     // redirect: 'https://hutechhelper.herokuapp.com/api/redirect',
-    redirect: 'http://localhost:5000/api/redirect',
-    // redirect: 'https://hutechhelper.glitch.me/api/redirect',
+    // redirect: 'http://localhost:5000/api/redirect',
+    redirect: 'https://hutechhelper.glitch.me/api/redirect',
 }
 
 const { client_id, client_secret, redirect } = appCredentials;
@@ -44,7 +44,7 @@ const deleteCurrentCalendar = async (calendarId) => {
     const CAL = google.calendar({ version: 'v3', auth: oAuth2Client });
     try {
         CAL.calendars.delete({ calendarId: calendarId });
-    } catch (error) {
+    } catch (err) {
         console.log("[ERROR] Error occurred while deleting calendar: " + err);
     }
 }
@@ -60,9 +60,9 @@ exports.getAuthURL = () => {
 
 exports.acquireToken = async (link) => {
     try {
-        const url = new URL(link, 'http://localhost:5000');
+        //const url = new URL(link, 'http://localhost:5000');
         // const url = new URL(link, 'https://hutechhelper.glitch.me');
-        // const url = new URL(link, 'http://hutechhelper.herokuapp.com');
+        const url = new URL(link, 'http://hutechhelper.herokuapp.com');
         let myToken = {};
         const code = new URLSearchParams(url.search).get('code');
         oAuth2Client.getToken(code, (err, token) => {
@@ -75,7 +75,7 @@ exports.acquireToken = async (link) => {
         return myToken;
     } catch (error) {
         console.log('[ERROR] Error occurred while acquiring token: ' + error);
-        throw err;
+        throw error;
     }
 
 }

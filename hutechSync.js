@@ -20,8 +20,8 @@ exports.getSchedule = async (username, password) => {
     try {
 
 
-        // const browser = await puppeteer.launch({ args: ['--no-sandbox'] });  
-        const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: false });
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] });  
+        // const browser = await puppeteer.launch({ args: ['--no-sandbox'], headless: false });
         const page = await browser.newPage();
 
         page.on('dialog', async dialog => {
@@ -53,6 +53,7 @@ exports.getSchedule = async (username, password) => {
                     return null;
                 })
             if (student != null) {
+                await browser.close();
                 return student.username;
             }
             else {
