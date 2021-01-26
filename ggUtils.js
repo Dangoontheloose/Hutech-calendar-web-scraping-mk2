@@ -73,8 +73,8 @@ exports.acquireToken = async (link) => {
             myToken = token;
         });
         return myToken;
-    } catch (error) {
-        console.log('[ERROR] Error occurred while acquiring token: ' + error);
+    } catch (err) {
+        console.log('[ERROR] Error occurred while acquiring token: ' + err);
         throw err;
     }
 

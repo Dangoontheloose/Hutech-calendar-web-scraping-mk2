@@ -53,6 +53,7 @@ exports.getSchedule = async (username, password) => {
                     return null;
                 })
             if (student != null) {
+                await browser.close();
                 return student.username;
             }
             else {
@@ -121,8 +122,8 @@ exports.getSchedule = async (username, password) => {
                 return username;
             }
         }
-    } catch (error) {
+    } catch (err) {
         console.log('[ERROR] Error occurred while trying to validate student account: ' + err);
-        throw error;
+        throw err;
     }
 };

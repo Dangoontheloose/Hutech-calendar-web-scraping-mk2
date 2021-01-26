@@ -17,6 +17,9 @@
     <h3 style="font-size: 20px;">Account verified 👍 </h3>
 
     <% } else { %>
+      <% if (studentAccVerified == false) {%>
+        <h3>😠 Khong tim thay tai khoan. Vui long kiem tra lai thong tin dang nhap</h3>
+        <% } %>
       <form action="/login" method="post" onSubmit="document.getElementById('sv-btn').disabled=true;">
         <p>
           <label>Username:</label>
